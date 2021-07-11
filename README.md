@@ -1,7 +1,7 @@
 ### Installation Guide
 1. Clone this repo
 2. Run Command npm i
-3. Create a .env file and add local mongo connection uri as MONGODB_URL=mongodb://127.0.0.1:27017/ion-energy-db
+3. Create a .env file in the root of project and add local mongo connection uri as MONGODB_URL=mongodb://127.0.0.1:27017/ion-energy-db
 4. Create a folder with the name "uploads" in the root of the project.
 5. Start the server using "node --max-old-space-size=4096 app.js"
 6. The JSON file is uploaded in the uploads folder.(NOTE: Do Not Delete this file)
