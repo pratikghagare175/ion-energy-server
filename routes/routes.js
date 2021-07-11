@@ -6,8 +6,6 @@ const fs = require("fs");
 const jsonStream = StreamArray.withParser();
 const Thermometer = require("../models/thermometerModel");
 
-//node --max-old-space-size=4096 app.js
-
 //? Uploading the file to uploads folder using multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -26,7 +24,7 @@ const upload = multer({
     }
     cb(undefined, true);
   },
-  // storage,
+  storage,
 });
 
 router.post(
@@ -68,15 +66,19 @@ router.post(
       throw new Error(error.message);
     }
 
-    //internal Node readable stream option, pipe to stream-json to convert it for us
+    //internal Node readable stream option, pipe to stream-json to convert it
     fs.createReadStream(`uploads/${req.file.originalname}`).pipe(jsonStream.input);
     jsonStream.on("data", ({ key, value }) => {
       console.log("Executing", key);
 
       const d_month = new Date(value.ts).getMonth();
 
+      //check if a month is available or not
       const arrIndex = template.findIndex((oj) => oj.month === months[d_month]);
 
+      //if month is available then increase its temperature by the "val" and the counter count by 1
+
+      // if month is not available then add the month object along with temperature and initiate the counter by 1
       if (arrIndex > -1) {
         template[arrIndex].temperature += value.val;
         template[arrIndex].count++;
@@ -103,6 +105,7 @@ router.post(
 
         temperatureObj.month = item.month;
 
+        // taking avarage temperature per month and store in temperature property
         temperatureObj.temperature = Number((item.temperature / item.count).toFixed(2));
 
         dataToUpdate.push(temperatureObj);
@@ -118,6 +121,7 @@ router.post(
         },
       };
 
+      //? updating the data by thermId
       const updateThermometer = await Thermometer.findOneAndUpdate(dbFilter, updatedData);
       fs.unlinkSync(`uploads/${req.file.originalname}`); //Remove File after operation
       console.log("All Done");
@@ -149,11 +153,20 @@ router.get(
         "December",
       ];
       const graphData = await Thermometer.findOne({ thermId });
+
+      if(!graphData){
+        return res.status(404).send({ success: 0, result: [], message: "Data not Found" });
+      }
       const finalData = [];
-      graphData.yearTemp.forEach((val) => {
-        const index = months.indexOf(val.month);
-        finalData[index] = val;
-      });
+
+      //? if yearTemp array is not zero then arrange the months chronologically
+      if (graphData.yearTemp.length !== 0) {
+         graphData.yearTemp.forEach((val) => {
+           const index = months.indexOf(val.month);
+           finalData[index] = val;
+         });
+      }
+     
       const responseToSend = {
         success:1,
         result:finalData,
