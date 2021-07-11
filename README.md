@@ -12,3 +12,4 @@
    when the process ends.
 10. After that check your DB the values will be updated.
 11. At the end just refresh the page in Frontend to display the data.
+12. To retest the process just delete the DB entry and start the process again.
