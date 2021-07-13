@@ -185,15 +185,7 @@ router.get(
         const index = months.indexOf(val.month);
         finalData[index] = graphPlot;
       }
-
-      // //? if yearTemp array is not zero then arrange the months chronologically
-      // if (graphData.yearTemp.length !== 0) {
-      //   graphData.yearTemp.forEach((val) => {
-      //     const index = months.indexOf(val.month);
-      //     finalData[index] = val;
-      //   });
-      // }
-
+      
       const responseToSend = {
         success: 1,
         result: finalData,
