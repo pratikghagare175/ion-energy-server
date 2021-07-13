@@ -2,13 +2,16 @@ const mongoose = require("mongoose");
 
 const thermometerSchema = mongoose.Schema(
   {
-    thermId: {
-      type: Number,
+    month: {
+      type: String,
       required: true,
     },
-    yearTemp: {
+    year: {
+      type: Number,
+    },
+    weeklyTemp: {
       type: Array,
-      default: [],
+      required: true,
     },
   },
   {
